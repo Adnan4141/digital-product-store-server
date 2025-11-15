@@ -34,11 +34,13 @@ app.use((req, res) => {
   return sendError(res, 'Route Not Found', 404, { path: req.originalUrl });
 });
 
-app.listen(PORT, () => {
-  console.log(`
+if (process.env.VERCEL !== '1' && !process.env.VERCEL_ENV) {
+  app.listen(PORT, () => {
+    console.log(`
 🚀 Server ready at: http://localhost:${PORT}
 
-  `);
-});
+    `);
+  });
+}
 
 export default app;
