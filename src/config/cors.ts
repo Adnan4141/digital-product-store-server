@@ -2,6 +2,7 @@ import { CorsOptions } from 'cors';
 import { CLIENT_URL, NODE_ENV } from './env';
 
 const isVercelDomain = (url: string): boolean => {
+  if (!url) return false;
   return url.includes('vercel.app') || url.includes('vercel.com');
 };
 
@@ -13,7 +14,7 @@ export const corsOptions: CorsOptions = {
       'http://localhost:3001',
       'http://127.0.0.1:3000',
       'http://localhost:5555',
-    ];
+    ].filter(Boolean);
 
     if (!origin) {
       return callback(null, true);
@@ -23,7 +24,7 @@ export const corsOptions: CorsOptions = {
       return callback(null, true);
     }
 
-    if (isVercelDomain(CLIENT_URL) && isVercelDomain(origin)) {
+    if (isVercelDomain(origin)) {
       return callback(null, true);
     }
 
@@ -31,6 +32,14 @@ export const corsOptions: CorsOptions = {
       return callback(null, true);
     }
 
+    if (!CLIENT_URL || CLIENT_URL === 'http://localhost:3001') {
+      console.warn('CLIENT_URL not set properly, allowing all Vercel origins');
+      if (isVercelDomain(origin)) {
+        return callback(null, true);
+      }
+    }
+
+    console.error('CORS blocked origin:', origin, 'CLIENT_URL:', CLIENT_URL);
     callback(new Error('Not allowed by CORS'));
   },
   credentials: true,
