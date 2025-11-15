@@ -24,6 +24,9 @@ app.use(express.json());
 
 app.use('/api', routes);
 
+app.get('/', (req, res) => {
+  return sendSuccess(res, { status: 'ok' }, 'Welcome to the server', 200);
+});
 app.get('/api', (req, res) => {
   return sendSuccess(res, { status: 'ok' }, 'API is working', 200);
 });
